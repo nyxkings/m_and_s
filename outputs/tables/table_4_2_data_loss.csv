@@ -1,0 +1,5 @@
+Configuration,k1,k2,p1,p2,P_loss_correlated (corrected),P_loss_table42_formula
+1 on-campus only,1,0,0.001,,0.001,0.001
+"3 on-campus, same site",3,0,0.001,,0.001,1e-09
+2 on-campus + 1 cloud,2,1,0.001,0.0001,1.0000000000000001e-07,1e-10
+2 on-campus + 2 cloud,2,2,0.001,0.0001,1.0000000000000001e-11,1e-14

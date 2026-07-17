@@ -1,0 +1,5 @@
+name,analytical,simulated,abs_error,rel_error,passed,notes
+"Node availability formula MTTF=2000, MTTR=2",0.999000999000999,0.999000999000999,0.0,0.0,True,Section 4.1 worked example
+"Quorum formula (n=3, A=0.99) vs worked example",0.999703,0.9997020000000001,9.999999999177334e-07,1.0002970881529149e-06,True,Section 4.4 worked example
+"Single-node availability (k1=1, λ_d=0)",0.999000999000999,0.9989811363314306,1.9862669568437852e-05,1.988253223800629e-05,True,Section 4.9.1 limiting case
+Independent 3-replica shard availability (λ_d=0),0.999999999002994,1.0,9.970060332875619e-10,9.97006034281583e-10,True,Section 4.9.1 / Eq. A_shard = 1−(1−A)^k

@@ -2,11 +2,10 @@
 __pycache__/
 *.py[cod]
 *.egg-info/
-.eggs/
-dist/
-build/
 .pytest_cache/
 .mypy_cache/
-outputs/
+data/*.pkl
 *.log
 .DS_Store
+report_extracted.txt
+report_diagram.png

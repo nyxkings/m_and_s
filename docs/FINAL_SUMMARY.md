@@ -1,78 +1,100 @@
 # DRSRS Project — Final Implementation Summary
 
+Generated after the full Monte Carlo campaign (1000 × 5 years).
+
+## Verdict
+
+The report has been transformed into a working, verified Modelling & Simulation
+project. End-to-end availability matches the Section 4.3 prediction
+(**99.850%**), hybrid-cloud replication eliminates observed permanent data
+loss in simulation (vs non-zero loss when k2 = 0), and all four Section 4.9
+verification checks **PASS**.
+
 ## What was implemented
 
-A complete Modelling & Simulation project for the **Disaster-Resilient Student
-Record System (DRSRS)** from the CSC 508 Group 1 report, including:
+| Area | Status |
+|------|--------|
+| System architecture (Levels 0–3) | Done |
+| Consistent-hash sharding | Done |
+| Replication + multi-region + hybrid cloud | Done |
+| Availability / reliability / quorum models | Done |
+| Correlated-domain data-loss model | Done |
+| M/M/c Erlang-C queueing | Done |
+| Request generation, failure/repair, disasters | Done |
+| Monte Carlo DES (SimPy) | Done — 1000 × 5 years |
+| Sensitivity (k1, k2, λ_d) | Done |
+| Publication figures + tables | Done (`outputs/`) |
+| Chapter 4.8 placeholder replacement | Done (`outputs/reports/`) |
+| V&V against closed forms | Done — 4/4 PASS |
 
-| Area | Implementation |
-|------|----------------|
-| Architecture | Consistent-hash sharding, k1 campus sync, regional async, k2 cloud DR, 3-node Raft quorum |
-| §4.1–4.4 | Node, shard, series-system, and quorum availability formulas |
-| §4.5 | Correlated-domain data-loss model (+ Table 4.2 formula for comparison) |
-| §4.6 | CAP policy documented (AP reads / CP critical writes; last-write-wins) |
-| §4.7 | Full M/M/c Erlang-C (P0, P_wait, W_q, W, SLO fraction) |
-| §3.5 | SimPy DES: failure/repair, campus disasters, cloud outages, request queueing |
-| Monte Carlo | 1000 trials × 5 simulated years (configurable) |
-| Sensitivity | Sweeps over k1, k2, λ_d |
-| V&V | §4.9 limiting-case checks vs closed forms |
-| Outputs | PNG figures, CSV tables, Chapter 4.8 markdown + DOCX |
+## Key numerical results (full campaign)
 
-## How to run
+| Metric | Value |
+|--------|-------|
+| A_node (analytical) | 0.999001 |
+| A_system (analytical series) | 0.998500 (99.8500%) |
+| DB-tier availability (sim) | ≈ 100% (multi-replica) |
+| End-to-end A (A_net × A_app × A_db) | **99.850050%** |
+| Quorum availability (sim) | 99.999689% |
+| P_loss analytical (k1=2, k2=1) | 1.0 × 10⁻⁷ /year |
+| Data-loss rate sim (baseline k2=1) | 0 (none observed) |
+| Data-loss rate sim (k1=2, k2=0) | **1.625 × 10⁻³** /shard·year |
+| ρ | 0.625 |
+| Mean response (sim) | 49.96 ms |
+| SLO ≤ 200 ms (sim) | **98.18%** |
+
+## Issues found and fixed
+
+Documented in `docs/CORRECTIONS.md`:
+
+1. **Table 3.2 μ=80** vs **§4.7 μ=20** — used μ=20 (ρ=0.625).
+2. **P_loss = p1^{k1}×p2^{k2}** contradicts correlated narrative — primary model is **P_loss = p1 × p2^{k2}**.
+3. **Regional replica** missing from Table 3.2 — added `k_regional_replicas=1`.
+4. Cloud DES rate derived from annual p2; disaster duration ~ Exp(48 h).
+5. Request arrivals thinned for computational tractability.
+
+## Assumptions made
+
+- Exp failure/repair/disaster/cloud-outage durations
+- Independent λ_d disasters on Campus A and Campus B
+- Network/app enter e2e availability via series product (DES focuses on DB/quorum)
+- Sensitivity: 100 trials per configuration (baseline: 1000 as specified)
+
+## Project layout
+
+```
+config/default.yaml
+drsrs/{models,simulation,analysis,viz,main.py}
+docs/{CORRECTIONS.md,FINAL_SUMMARY.md,architecture_diagram.txt}
+outputs/{figures,tables,reports}/
+tests/test_models.py
+requirements.txt
+README.md
+```
+
+## How to reproduce
 
 ```bash
+cd "/home/user/Desktop/Project stuff/M_and_S"
 source .venv/bin/activate
-python -m drsrs.main          # full campaign
+pip install -r requirements.txt
+python -m drsrs.main          # full (~hours on 4 cores)
 python -m drsrs.main --quick  # smoke test
 pytest tests/ -q
 ```
 
-## Issues found in the report and corrections
+Paste `outputs/reports/chapter_4_8_results.md` (or the DOCX) into the group
+report wherever it says “Insert results here”.
 
-See `docs/CORRECTIONS.md` for full detail. Headline fixes:
+## Remaining limitations
 
-1. **μ = 80 vs μ = 20:** Table 3.2 mislabelled total capacity as per-thread rate.
-   Code uses μ = 20 req/s/thread per Section 4.7 (ρ = 0.625).
-2. **P_loss formula:** Prose says campus replicas are correlated (P_loss ≈ p1 when
-   k2=0); Table 4.2 hybrid rows use p1^k1 × p2^k2. Code uses
-   **P_loss = p1 × p2^k2** as primary.
-3. **Regional replica:** Required by §3.2/§5.4 but missing from Table 3.2 →
-   default `k_regional_replicas = 1`.
-4. **Cloud DES process:** Derived Poisson rate from annual p2.
-5. **Request thinning:** Full λ over 5 years is intractable; thinned sampling
-   + Erlang-C closed form.
+- Exponential (not Weibull) lifetimes; no disaster clustering; no cost model;
+  no cyber common-mode failure (§5.2 of the report).
+- Baseline P_loss ≈ 10⁻⁷/year is too rare to observe in 1000×5×16 shard-years
+  (expected ≪ 1 event); durability claims rest on analytics + k2=0 vs k2≥1
+  sensitivity contrast, which is strong and consistent with §4.5.
 
-## Assumptions made (where report was silent)
+## Recommendation (aligned with Chapter 5)
 
-- Disaster and cloud-outage durations ~ Exp(mean = 48 h)
-- Campus A and Campus B each suffer disasters at λ_d independently
-- DES tracks DB/quorum availability; A_network × A_app applied for e2e A_system
-- Cloud outage mean duration equals campus disaster mean duration
-- Sensitivity uses 100 trials/config (baseline uses 1000 as specified)
-
-## Verification status
-
-Automated checks (Section 4.9):
-
-- Node A = MTTF/(MTTF+MTTR) exact match
-- Quorum n=3, A=0.99 ≈ 0.9997 match
-- Single-node DES converges to A
-- Independent 3-replica DES converges to 1−(1−A)^3
-
-## Remaining limitations / recommendations
-
-- Exponential failure times (report §5.2); Weibull aging not modelled
-- No cost/energy/bandwidth model
-- No security/ransomware common-mode failure
-- Rare loss events (P ≈ 10^{-7}/year) need huge simulated exposure to observe
-  empirically; rely on analytics + relative k2=0 vs k2=1 sensitivity
-- Calibrate MTTF/MTTR/λ_d against institutional operational data when available
-
-## Recommended production configuration (from models + sim)
-
-- Shard by consistent hash of matriculation number (N = 16+)
-- k1 = 2 synchronous campus replicas
-- ≥1 async regional replica
-- k2 ≥ 1 cloud DR replica
-- 3-node Raft coordination quorum
-- Provision c so ρ = λ/(cμ) stays well below 1 (design ρ ≈ 0.625)
+Adopt **k1=2**, **≥1 regional async replica**, **k2≥1 cloud DR**, **3-node
+Raft quorum**, and keep ρ comfortably below 1.
