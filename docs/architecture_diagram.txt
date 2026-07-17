@@ -1,0 +1,36 @@
+"""
+Architecture diagram (text replacement for report placeholder
+"[Insert diagram here.]" in Section 3.2 / Conceptual Architecture Diagram).
+
+Users
+  │
+  ▼
+┌─────────────────────────────┐
+│ Load Balancer / API GW (×2) │  active-active, DNS/anycast failover
+└─────────────┬───────────────┘
+              │
+    ┌─────────┴─────────┐
+    ▼                   ▼
+ App Servers         App Servers
+ (Region A ×2)       (Region B ×2)     ← stateless, horizontally scaled
+    │                   │
+    └─────────┬─────────┘
+              ▼
+      Shard Router (consistent hash of matric no.)
+              │
+    ┌─────────┼─────────┬──────────────┐
+    ▼         ▼         ▼              ▼
+ Shard 0   Shard 1   ...            Shard N-1
+    │
+    ├──● Campus A primary      ════ synch ════ ● Campus A sync replica
+    ├──⇢ Campus B async regional replica
+    └──⇢ Cloud DR async replica (+ object-store backups)
+
+Coordination: Raft quorum (3 or 5 nodes) — shard ownership & failover
+
+Legend:
+  ════  synchronous replication (Level 0/1)
+  ⇢     asynchronous replication (Level 2/3)
+"""
+
+DIAGRAM_ASCII = __doc__

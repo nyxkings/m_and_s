@@ -1,0 +1,65 @@
+# DRSRS Simulation Configuration
+# Source: CSC 508 Group Project Report, Table 3.2 and Chapter 4
+# Corrections documented in docs/CORRECTIONS.md
+
+seed: 42
+
+# --- Architecture ---
+n_shards: 16
+k1_campus_replicas: 2          # synchronous intra-site replicas (Campus A)
+k_regional_replicas: 1         # asynchronous Campus B replicas (Section 3.2 Level 2)
+k2_cloud_replicas: 1           # asynchronous hybrid-cloud DR replicas
+coordinator_nodes: 3           # Raft/Paxos odd-numbered quorum
+
+# --- Reliability (hours) ---
+mttf_hours: 2000.0
+mttr_hours: 2.0
+
+# Layer availabilities for series system model (Section 4.3)
+a_network: 0.9995
+a_app: 0.9990
+
+# --- Disaster model ---
+# λ_d = 0.05 events/year → rate per hour
+disaster_rate_per_year: 0.05
+disaster_duration_mean_hours: 48.0
+# Independent annual cloud-region total-failure probability (Section 4.5)
+p2_cloud_annual: 1.0e-4
+# Campus disaster annual probability used in closed-form (p1).
+# Simulation uses Poisson disasters at λ_d; p1 for analytics ≈ 1 - exp(-λ_d).
+# Report worked example uses p1 = 0.001; we keep λ_d for DES and p1_analytic for formulas.
+p1_analytic: 1.0e-3
+
+# --- Queueing (M/M/c) ---
+# CORRECTION: Report Table 3.2 listed μ=80 as "per server thread", but Section 4.7
+# worked example uses μ=20 req/s per thread with c=4 → cμ=80. We use μ=20.
+lambda_req_per_s: 50.0
+mu_per_thread: 20.0
+threads_per_replica: 4
+slo_latency_ms: 200.0
+
+# --- Simulation horizon ---
+sim_years: 5.0
+n_trials: 1000
+# Sampling interval for continuous availability tracking (hours)
+# State is also observed on every failure/repair/disaster; this is a backup sampler.
+availability_sample_hours: 24.0
+
+# --- Sensitivity sweeps ---
+sensitivity:
+  k1_values: [1, 2, 3, 4]
+  k2_values: [0, 1, 2]
+  lambda_d_values: [0.01, 0.05, 0.10, 0.20]
+  n_trials_sensitivity: 100
+
+# --- Verification ---
+verification:
+  n_trials: 200
+  sim_years: 2.0
+
+# Paths
+paths:
+  figures: outputs/figures
+  tables: outputs/tables
+  reports: outputs/reports
+  data: data

@@ -1,0 +1,271 @@
+[] FEDERAL UNIVERSITY OF TECHNOLOGY, AKURE (FUTA)  
+[] DEPARTMENT OF COMPUTER SCIENCE  
+[] CSC 508 MODELLING AND SIMULATION  
+[] GROUP PROJECT REPORT 
+[] TOPIC: DATABASE AND DISTRIBUTED SYSTEMS 
+[] CASE STUDY: A DISASTER-RESILIENT STUDENT RECORD SYSTEM (DRSRS) ARCHITECTURE, MATHEMATICAL MODELLING, AND SIMULATION OF AVAILABILITY AND DATA-LOSS RISK IN A SHARDED, MULTI-REGION, HYBRID-CLOUD DATABASE.
+[] SUBMITTED TO  
+[] DR. E.A AJULO  
+[] July 2026  
+[]  TEAM MEMBERS  
+
+=== TABLE ===
+Abayomi Melody Oluwatobi | CSC/20/4814
+Abdul Ayodele Tajudeen | CSC/22/8914
+Abdullahi Ahmadu Garuba | CSC/20/4816
+Abdulsalam Mariam Pelumi | CSC/22/8915
+Adeka John Esie | CSC/20/4819
+Adeniran Olamide Oyinlola | CSC/20/4822
+Adetokunbo Joseph Oluwabukunmi | CSC/20/4823
+Aiku Oluwadarasimi Temitope | CSC/22/8930
+Ajayi Michael | CSC/20/4825
+Ajisafe Zainab Omolara | CSC/20/4827
+Akinbode John | CSC/22/8932
+Akinsanya Akinwumi Emmanuel | CSC/20/4829
+Akintola Daniel Victor | CSC/20/4830
+Akinwonmi Ayooluwa Shalom | CSC/20/4831
+Akinyele Oluwafemi Joseph | CSC/22/8937
+Arannilewa Seyitan Shalom | CSC/20/4832
+Aribisala Praise | CSC/20/4833
+Arije Alice | CSC/20/4834
+Atalese Enoch Adesola | CSC/20/4835
+Atoyebi Opeyemi | CSC/20/4836
+Ayesoro Damola Peter | CSC/20/4837
+Ayinla Feranmi Emmanuel | CSC/20/4838
+Balogun Opemiposi Akinyemi | CSC/20/4839
+Bamidele Oluwatosin Daniel | CSC/20/4840
+Bankole Afeez Oyinkansola | CSC/20/4842
+Chinda Ada | CSC/20/4844
+Emola Ifeoluwa | CSC/20/4845
+Fagbohun Dunsin Oladotun | CSC/20/4846
+Faith Boyejo | CSC/20/4843
+Falowo Omolola | CSC/20/4849
+Fashugba Temitope Joshua | CSC/20/4850
+Fowotade Tolulope Elijah | CSC/20/4851
+Gbadura-Glory Bright | CSC/20/4852
+Haastrup Emmanuel Adedayo | CSC/20/4853
+=== END TABLE ===
+
+[Heading1] ABSTRACT  
+[] Student record-keeping in most Nigerian universities still leans heavily on a single database sitting in one server room, which sounds fine until that server room floods, loses power for good, or simply crashes. This project looks at that problem through the lens of databases and Distributed Systems, using a case we call the Disaster-Resilient Student Record System (DRSRS) to work through it properly. Rather than just describing an architecture on paper, we built the design around three ideas that reinforce each other: sharding the database. Hence, no single node holds everything, replicating each shard across several independent locations, and running a hybridcloud setup where campus servers handle everyday traffic. At the same time, a public cloud region stands by as an independent disaster-recovery site. To back the design up with numbers rather than opinions, we developed a set of mathematical models drawn from reliability engineering and queueing theory, covering how available the system is, how likely a record is to be reachable at any given moment, and, perhaps the most important question of all, how likely it is that a record could be lost forever. These models were then run through a Monte Carlo simulation that mimics random node failures, network splits, and full-blown disaster events over simulated time. What came out of it was fairly convincing: pairing sharding with multi-region, hybrid-cloud replication cuts the chance of permanently losing a record by several orders of magnitude compared to keeping everything in one place, while still keeping the system reachable more than 99.9% of the time, even when an entire campus site goes dark.  
+[Heading1] TABLE OF CONTENTS   
+[Heading1] CHAPTER 1  
+[Heading1] INTRODUCTION  
+[Heading1] 1.1 Background to the Study  
+[] Almost every university today runs on digital records: admission details, transcripts, biodata, course registrations, financial clearance, all of it sitting in some database somewhere. In Nigeria specifically, the environment these systems have to survive in is not exactly gentle: power supply is unreliable, network connectivity comes and goes, and there is always some risk, however small, of a fire outbreak, flooding, building collapse, or civil disturbance disrupting whatever infrastructure a school depends on. The trouble is that a lot of these record systems are still built around one server, or at best one physical location. When that one location goes down, everything tied to it goes down with it, and in the worst case, it does not just go down; it disappears entirely.  
+[] This is the gap this project sets out to address, using the tools of Modelling and Simulation rather than just architecture diagrams and good intentions. We designed, worked through the mathematics of, and simulated a distributed database architecture for student records that is meant to survive exactly this kind of disaster. To keep the discussion grounded, we built the whole project around one concrete case: the Disaster-Resilient Student Record System, or DRSRS. Through this case, the core ideas of distributed systems sharding, replication, consistency trade-offs, and fault tolerance are shown mathematically and tested through simulation, not just described in the abstract.  
+[Heading1] 1.2 Statement of the Problem  
+[] A student record system built around a single server or a single datacenter has one obvious weakness: everything depends on that one point. If it fails, whether from a hardware fault, a cyberattack, a fire, a flood, or simply a long enough power or network outage, students and staff lose access to academic records, and in a bad enough case, those records are gone for good. What is missing in most existing designs is not awareness that this is a risk, but a way to actually quantify it. This project addresses that gap by building an architecture backed by real reliability models that can tell us, in numbers, how likely the system is to stay reachable, and how unlikely (or likely) it is that a record could be permanently lost, even if an entire physical site is destroyed or cut off.  
+[Heading1] 1.3 Aim and Objectives of the Study  
+[] This project aims to design, model, and simulate a distributed, disaster-resilient database architecture for student records, using the DRSRS as a working case study. To get there, the project pursues the following objectives:  
+[] Design a distributed database architecture for student records that has no single point of failure.  
+[] Apply database sharding to spread records horizontally across multiple nodes, improving both scalability and fault isolation.  
+[] Build in multiple levels of distribution within a datacenter, across regions, and across a hybrid cloud so that resilience increases progressively at each level.  
+[] Develop mathematical models for system and record availability, and for the probability of permanent data loss, drawing on reliability engineering and probability theory.  
+[] Simulate these models under randomized failure conditions and disaster scenarios, and interpret what the results actually mean for the design.  
+[] Recommend a practical, reasonably optimal configuration, in terms of number of replicas and where they should be placed, that balances resilience against cost and complexity.  
+[Heading1] 1.4 Significance of the Study  
+[] Beyond satisfying the requirements of the CSC 508 course, this project has some practical value. 
+[] It demonstrates, with actual numbers rather than assumptions, why certain architectural decisions (sharding, multi-region replication, hybrid cloud) are worth the added complexity for a system as important as student records. For a Nigerian institution in particular, where power and infrastructure reliability cannot always be taken for granted, this kind of quantitative case for disaster resilience is arguably more relevant than it would be in a more stable operating environment. The models developed here are also general enough to be reused or adapted for other record-keeping systems facing similar risks: hospital records, land registries, or any other dataset where losing the data entirely would be a genuine disaster rather than an inconvenience.  
+[Heading1] 1.5 Scope of the Study  
+[] This project covers the design of the DRSRS architecture, the mathematical modeling of its availability and data-loss characteristics, and a simulation used to test those models under randomized failure and disaster conditions. It does not extend to an actual production deployment, a full cost-benefit or budget analysis, or a detailed treatment of cybersecurity threats such as ransomware; these are acknowledged as important but are set aside as outside the boundaries of what this project set out to model. The reliability models presented are also limited to physical and infrastructural failure (hardware, power, network, site disasters); they are not a substitute for a proper security audit.  
+[Heading1] 
+[Heading1] 
+[Heading1] CHAPTER 2  
+[Heading1] LITERATURE REVIEW  
+[Heading1] 2.1 Distributed Databases  
+[] A distributed database is, put simply, a set of databases stored across different physical locations that are made to behave as though they were one single database from the point of view of whoever is using them. The point of spreading data out like this is usually one, or more, of three things: to scale beyond what a single machine can handle, to tolerate failures without losing service, and to keep data closer to the users who need it so that access is faster.  
+[Heading1] 2.2 Sharding  
+[] Sharding, sometimes called horizontal partitioning, is the practice of splitting a large dataset into smaller, non-overlapping pieces called shards, with each shard living on its own node. For the DRSRS, this could mean splitting records by faculty, by year of admission, or, as the design in Chapter Three eventually settles on, by hashing the matriculation number. The benefit is twofold: writes can happen in parallel across shards rather than queuing up at one node, and if a single node fails, only the slice of data it holds is affected, not the entire database.  
+[Heading1] 2.3 Replication  
+[] Replication is the practice of keeping more than one copy of the same data on independent nodes so that losing one copy does not mean losing the data or losing access to it. There are two broad flavors: synchronous replication, where all copies are updated together before a write is considered complete (safer, but slower because everyone has to agree first), and asynchronous replication, where copies catch up shortly after the fact (faster, but carries a small risk that the very latest write could be lost if the primary fails before it finishes copying).  
+[Heading1] 2.4 Single Point of Failure (SPOF) Elimination  
+[] A single point of failure is any one component whose failure is enough to bring the whole system down. The usual fix is redundancy: having more than one load balancer, more than one application server, and more than one database replica, and making sure these redundant copies do not all share the same failure risk (same power supply, same network, same building). If they do share a risk, the redundancy is somewhat illusory, because one bad event could still take all of them out together, a point that turns out to matter a great deal in Chapter Four.  
+[Heading1] 2.5 The CAP Theorem  
+[] The CAP theorem is one of the more well-known results in distributed systems theory. It states that a distributed data store cannot simultaneously guarantee all three of consistency, availability, and partition tolerance; at most two can be had at once. Since network partitions are simply a fact of life in a system spread across multiple regions, and especially so in an environment with unreliable connectivity, the real choice the DRSRS has to make is between staying strictly consistent during a partition (which means rejecting some requests) or staying available (which means occasionally serving slightly outdated data). This trade-off, and how the DRSRS actually handles it, is discussed further in Section 4.6.  
+[Heading1] 2.6 Hybrid Cloud Computing  
+[] A hybrid cloud architecture is one that combines infrastructure the organization owns and runs itself (on-premises servers, in this case campus infrastructure) with infrastructure rented from a public cloud provider such as AWS, Microsoft Azure, or Google Cloud. In the DRSRS design, the campus tier is where most day-to-day traffic is handled, since it is close to the users and has low latency, while the cloud tier exists mainly as an independent, geographically separate backup and disaster-recovery site. What makes this combination powerful is that the two environments are run by entirely different organisations, on different power grids, in different physical locations, which means it is reasonable to treat their failure risks as largely independent of one another. That independence turns out to be the whole point, as the data-loss model in Section 4.5 shows.  
+[] CHAPTER 3  
+[Heading1] SYSTEM DESIGN AND METHODOLOGY  
+[Heading1] 3.1 Description of the Proposed System  
+[] The Disaster-Resilient Student Record System is designed to store and serve the core categories of student data: biodata, admission records, course registrations, grades and transcripts, and financial or clearance records. For the design to actually count as "disaster-resilient" and not just distributed for its own sake, it needs to satisfy a few requirements, and these requirements are exactly what the mathematical models in Chapter Four are built to measure:  
+[] Availability: a student or staff member should be able to reach a record at almost any time, from any campus or remote location.  
+[] Durability: once a record is written and acknowledged, it should not be lost permanently, even if a whole physical site is destroyed.  
+[] Fault isolation: one shard or node failing should not take the rest of the system down with it.  
+[] Scalability: the system should be able to grow with student enrollment without needing a redesign.  
+[] A sensible consistency balance: the system should lean toward staying available during network partitions while resolving any conflicts once connectivity comes back.  
+[Heading1] 3.2 System Architecture  
+[] The DRSRS architecture is built up in four levels, with each level adding a further degree of resilience on top of the one before it.  
+[ListParagraph] Level 0, Node redundancy: Every database node has at least one primary/replica pair within the same rack, so a single disk or server failure does not immediately cause a problem.  
+[ListParagraph] Level 1, Intra-datacenter sharding and replication: student records are sharded across several nodes within a campus datacenter, and each shard has synchronous replicas within the same site so that failover happens almost instantly.  
+[ListParagraph] Level 2, inter-region replication: each shard is also asynchronously replicated to a cluster in a second, geographically separate campus or region, so a disaster in one region does not touch the other.  
+[ListParagraph] Level 3, Hybrid-cloud disaster recovery: on top of the two physical regions, a further replica of every shard streams asynchronously to a public cloud region. Since this cloud tier is run by an entirely separate provider on separate infrastructure, it gives the strongest independence of all the levels, and it acts as the system's disaster-recovery and standby 
+[ListParagraph] tier.  
+[Heading1] Component Breakdown  
+
+=== TABLE ===
+Layer | Component | Redundancy Strategy
+Access | Load Balancer / API Gateway | At least 2 instances, active-active, with anycast/DNS failover
+Application | App/Backend Servers | Stateless, horizontally scaled, at least   2 per region
+Database Shard Tier | Sharded relational/NoSQL cluster | N shards, each with k intra-site replicas
+Database Regional Tier | Cross-campus replica cluster | Asynchronous replication to at least   1 secondary region
+Database Cloud/DR   Tier | Public cloud replica and backups | Independent provider, independent power and network
+Coordination | Consensus/metadata service | Raft or Paxos-based, odd-numbered quorum (e.g. 3 or 5 nodes)
+=== END TABLE ===
+
+[] Table 3.1 DRSRS component breakdown and redundancy strategy  
+[Heading1] 3.3 Sharding Strategy  
+[] Records are sharded using a hash of the matriculation number, mapped onto N shards through consistent hashing. Consistent hashing was chosen over a simpler modulo-based approach because it keeps the amount of data that has to be moved around to a minimum whenever a shard is added or removed, which matters here, since student enrolment is expected to keep growing and the system needs to scale without a full redesign every time.  
+[Heading1] 3.4 Consensus and Metadata Coordination  
+[] A small cluster of coordination nodes, using an odd number, typically 3 or 5, and a consensus algorithm such as Raft, keeps track of which node currently owns each shard and manages automatic failover when something goes wrong. The odd number matters: it guarantees that a majority quorum can still be reached even after losing a minority of the nodes, which is the same majority-quorum principle worked through mathematically in Section 4.4.  
+[Heading1] Conceptual Architecture Diagram (Description)  
+[] [Insert diagram here.] A reasonable layout: Users, Load Balancer (×2), App Servers (×2 per region), Shard Router, {Shard 1.N}, with each shard shown as a small cluster of icons a primary node on Campus A, a synchronous replica also on Campus A, an asynchronous replica on Campus B, and a dashed connection out to a Cloud DR replica in a separate cloud region. A legend should distinguish solid lines (synchronous replication) from dashed lines (asynchronous replication).  
+[Heading1] 3.5 Simulation Methodology  
+[] To actually test whether the architecture above holds up the way the mathematics in Chapter Four says it should, a Monte Carlo / discrete-event simulation is used to exercise the models over simulated time. Closed-form formulas alone assume a kind of steady-state independence that does not capture time-correlated events such as a disaster taking out several nodes together, so simulation fills that gap. The simulation is implemented in Python, using SimPy for discrete-event scheduling, NumPy for random sampling, and Matplotlib for plotting the results.  
+[Heading1] 
+[Heading1] 
+[Heading1] Simulation Parameters  
+
+=== TABLE ===
+Parameter | Symbol | Assumed Value
+Per-node MTTF | MTTF | 2,000 hours
+Per-node MTTR | MTTR | 2 hours
+On-campus replicas per shard | k1 | 2
+Cloud DR replicas per shard | k2 | 1
+Disaster event rate (campus-wide) | λ_d | 0.05 events/year
+Disaster duration (mean) |  | 48 hours
+Number of shards | N | 16
+Request arrival rate per shard | λ | 50 req/s
+Service rate per server thread | μ | 80 req/s
+Server threads per shard replica | c | 4
+Simulated period |  | 5 simulated years, 1,000 Monte Carlo trials
+=== END TABLE ===
+
+[] Table 3.2 Simulation input parameters (values to be calibrated by the group; adjust to your own assumptions)  
+[Heading1] Simulation Procedure  
+[ListParagraph] Start every node across every shard in the "up" state, with independent failure and repair processes drawn from exponential distributions based on the MTTF and MTTR values above.  
+[ListParagraph] Separately inject rare, correlated "disaster" events at rate λ_d that take down all on-campus replicas of one region at once, for the sampled disaster duration, while leaving the cloud replicas untouched.  
+[ListParagraph] At each simulated time step, record whether every shard still has at least one reachable replica (this feeds availability) and whether every replica of a shard happens to be down at the same moment within a disaster window (this feeds the data-loss count).  
+[ListParagraph] Run the M/M/c queueing sub-model alongside this to sample request wait times and work out what fraction of requests are served within the target service-level objective.  
+[ListParagraph] Repeat the whole process for 1,000 independent Monte Carlo trials and aggregate the results into the metrics below.  
+[Heading1] Metrics Collected  
+[] Empirical system availability, the percentage of simulated time during which every shard had at least one reachable replica.  
+[] Empirical probability of permanent data loss, per shard, per simulated year.  
+[] The distribution of request waits times and the percentage of requests meeting a 200 ms service-level target.  
+[] How sensitive the above results are to k1, k2, and the disaster frequency λ_d.  
+[Heading1] CHAPTER 4  
+[Heading1] MATHEMATICAL MODELLING, SIMULATION, AND RESULTS
+[Heading1] 4.1 Component Availability  
+[] Put simply, availability is just the fraction of time a component is actually working properly, out of all the time it exists. A server that tends to run for a long time before it breaks (a high MTTF, 
+[] Mean Time to Failure) and does not take long to get fixed when it does break (a low MTTR, Mean Time To Repair) will naturally be available most of the time. The formula behind this idea just compares "time spent working" against "total time, working and being repaired combined":  
+[Heading3] A = MTTF / (MTTF + MTTR)  
+[] Worked Example: Say a database server, on average, runs for 2,000 hours before something goes wrong (MTTF = 2,000 hours), and each time it does, it takes about 2 hours to get it back up (MTTR = 2 hours). Then:  
+[Heading3] A = 2000 / (2000 + 2) = 2000 / 2002 ≈ 0.9990  
+[] So the server is working properly roughly 99.90% of the time. Spread across a full year (8,760 hours), that missing 0.10% adds up to about 8.8 hours of downtime, a little over a working day.  
+[] This number, A, is really the starting point for everything else in this chapter.  
+[Heading1] 4.2 Availability of a Replicated Shard  
+[] A single server can fail, sure, but it is far less likely that several independent servers all fail at the same time. If a shard is copied across k separate nodes, it only becomes unreachable if every one of those k copies happens to be down simultaneously. Since the chance of one node being down is (1 − A), the chance of all k being down together is that small figure multiplied by itself k times: (1 − A)^k. Take that tiny "all down at once" probability away from 1, and you get the shard's overall availability:  
+[Heading3] A_shard = 1 − (1 − A)^k  
+[] Worked Example: Using A = 0.990 per node (about a 1% chance any single node is down at a given moment) and k = 3 replicas of the same shard:  
+[Heading3] A_shard = 1 − (1 − 0.990)^3 = 1 − (0.010)^3 = 1 − 0.000001 = 0.999999  
+[] With just one copy, the shard is down about 1% of the time. With three independent copies, all three would have to fail at once for anything to go wrong, and that only happens about 0.0001% of the time, so the shard is now up 99.9999% of the time. This is really the whole argument for replication over simple backups: it is not just about having a copy somewhere; it is about how unlikely it is for all the copies to fail together. Table 4.1 extends this same example across more replica counts.  
+
+=== TABLE ===
+Replicas (k) | Downtime Probability   (1−A)^k | Shard Availability   A_shard | Approx. Downtime /   Year
+1 | 1.0 × 10⁻² | 0.990000 | ~87.6 hours
+2 | 1.0 × 10⁻⁴ | 0.999900 | ~52.6 minutes
+3 | 1.0 × 10⁻⁶ | 0.999999 | ~31.5 seconds
+4 | 1.0 × 10⁻⁸ | 0.99999999 | ~0.3 seconds
+=== END TABLE ===
+
+[] Table 4.1 Effect of replication factor k on shard availability (A = 0.990 per node)  
+[Heading1] 4.3 Overall System Availability  
+[] A student's request to view a record does not go straight to the database; it passes through several layers one after the other: the network, the load balancer, the application server, and only then the database itself. This works like a chain: if any single link breaks, the whole request fails, no matter how solid the other links are. For layers that all have to work together like this (in series), we multiply their individual availabilities, since every one of them has to be up at the same time for the request to succeed:  
+[Heading3] A_series = A1 × A2 × ... × An  
+[] For the DRSRS specifically, a request passes through the network, then the application layer, and finally reaches a working database shard:  
+[Heading3] A_system = A_network × A_app × A_shard  
+[] Worked Example: Suppose the network layer, with its own redundant links, is available A_network = 0.9995 of the time; the application servers, running in a redundant pair, are available A_app = 0.999 of the time; and the database shard, thanks to the 3-replica setup from Section 4.2, is available A_shard = 0.999999 of the time. Multiplying these together:  
+[Heading3] A_system = 0.9995 × 0.999 × 0.999999 ≈ 0.9985  
+[] That works out to the whole system being usable about 99.85% of the time, or roughly 13 hours of downtime a year. It is worth noticing that this figure sits much closer to the weaker layers  
+[] (network and application, at 99.95% and 99.9%) than to the very strong database layer (99.9999%). In other words, the database is not actually the weak point in this design, the network and application layers are. That tells the group exactly where to put further effort if the goal is to push availability even higher.  
+[Heading1] 4.4 Quorum Availability for the Coordination Layer  
+[] To avoid disputes over which copy of a record is the correct one, a small group of coordinator nodes has to vote and agree on it, this is what "reaching a quorum" means, and it simply means more than half of the group agrees. The question worth asking is: what is the chance, at any given moment, that more than half of the coordinator nodes are actually up and able to vote? For n coordinator nodes needing a majority of m = ⌊n/2⌋ + 1 to be working, with each node independently up with probability A, the chance that at least m out of n are up follows the binomial reliability formula:  
+[Heading3] A_quorum = Σ (from i=m to n) [ C(n,i) × A^i × (1−A)^(n−i) ]  
+[] C(n,i), read as "n choose i", simply counts the number of different ways i nodes out of n could be the ones that happen to be up.  
+[] Worked Example: Take n = 3 coordinator nodes, each with availability A = 0.99. A majority needs m = 2 nodes up, and there are two ways this can happen, exactly 2 up and 1 down, or all 3 up:  
+[] A_quorum = [C(3,2)×0.99²×0.01¹] + [C(3,3)×0.99³×0.01⁰]  
+[Heading3] A_quorum = [3 × 0.9801 × 0.01] + [1 × 0.970299] ≈ 0.0294 + 0.9703 ≈ 0.9997  
+[] So a 3-node coordinator cluster reaches a working majority about 99.97% of the time. This is exactly why an odd number of coordinator nodes (3 or 5) is used instead of an even number: with an even number, a 50/50 split can occur where neither side has a genuine majority, a "split-brain" situation, whereas an odd number always produces a clear majority once more than half the nodes are reachable.  
+[Heading1] 4.5 Probability of Permanent Data Loss  
+[] A record is only truly, permanently lost if every single copy of it disappears at once, before there is any chance to restore it from a surviving location. This is the model that answers the project's central question: what is the actual chance of losing a student's data entirely? If a record has k copies, and each copy has some small independent chance p of being destroyed during a disaster, then for the record to be lost, all k copies have to be destroyed together. Multiplying that small chance by itself k times gives the loss probability:  
+[Heading3] P_loss = p^k   (assuming the replicas fail independently of one another)  
+[] There is a catch, though: replicas kept in the same building are not truly independent of each other. A single fire, flood, or long enough power failure can wipe out several on-campus copies at once, simply because they all share the same physical risk. To be honest about this, replicas should be split into two groups: k1 copies on-campus, which share a correlated disaster probability p1 (if disaster strikes, it tends to take all of them out together), and k2 copies in the cloud, which fail independently of whatever happens on campus, with their own small probability p2. The more realistic loss formula becomes:  
+[Heading3] P_loss = p1^(k1) × p2^(k2)  
+[] Worked Example 1, on-campus only, no cloud copy: Suppose the chance of a campus-wide disaster affecting all on-campus replicas together, in a given year, is p1 = 1 in 1,000 = 0.001, and there is no independent cloud copy (k2 = 0, so that part of the formula reduces to 1). Whether there is 1 on-campus replica or 3, it barely matters, because a single disaster tends to take all of them out together:  
+[Heading3] P_loss ≈ p1 = 0.001  (1 in 1,000 chance of total loss per year, regardless of how many correlated on-campus copies exist)  
+[] Worked Example 2, adding one independent cloud replica: Now add just one cloud replica (k2 = 1), with an independent cloud-failure probability of p2 = 1 in 10,000 = 0.0001, while the oncampus disaster probability stays at p1 = 0.001:  
+[Heading3] P_loss = p1^1 × p2^1 = 0.001 × 0.0001 = 0.0000001   (1 in 10,000,000)  
+[] Without a cloud copy, there is roughly a 1-in-1,000 chance every year of losing a student's record for good, simply because one disaster can wipe out all the on-campus copies at once. Add just one independent cloud copy, and that risk drops to about 1-in-10,000,000 per year, a reduction of roughly 10,000 times, because now the campus disaster and the cloud failure would both have to happen at the same time, and the two are essentially unrelated events. This one comparison is, honestly, the strongest and most concrete argument in the whole report for why hybrid cloud specifically, and not just "more backups on campus", is the right call. Table 4.2 pushes this comparison a bit further.  
+
+=== TABLE ===
+Configuration | p1 (on-campus disaster prob.) | p2 (cloud failure prob.) | P_loss
+1 on-campus replica only (k1=1, k2=0) | 1.0 × 10⁻³ |  | 1.0 × 10⁻³
+3 on-campus replicas, same site   (k1=3, k2=0) | 1.0 × 10⁻³   (correlated) |  | ≈1.0 × 10⁻³ (little improvement, correlated)
+2 on-campus + 1 cloud replica   (k1=2, k2=1) | 1.0 × 10⁻³ | 1.0 × 10⁻⁴ | 1.0 × 10⁻¹⁰
+2 on-campus + 2 cloud replicas   (k1=2, k2=2) | 1.0 × 10⁻³ | 1.0 × 10⁻⁴ | 1.0 × 10⁻¹⁴
+=== END TABLE ===
+
+[] Table 4.2 Effect of hybrid-cloud (independent-domain) replication on permanent data-loss probability  
+[] The table really just repeats the pattern from the worked examples above across a few more configurations. Adding more on-campus copies only barely moves the needle, but adding even one cloud copy drops the risk dramatically. The lesson for the design is fairly clear: it is better to spend the redundancy budget getting one copy into an independent location than to keep adding copies in the same one.  
+[Heading1] 4.6 The CAP Theorem Trade-off in Practice  
+[] Imagine the link between the campus and the cloud goes down for an hour, not an unrealistic scenario at all. Both sides are still individually running and taking requests, but they can no longer talk to each other. This creates a dilemma: if a student's record was just updated on the campus side, but the cloud side has not heard about it yet because the link is down, should the cloud side (i) refuse to answer until it can confirm it has the latest version, favouring correctness, at the cost of the student seeing an error, or (ii) answer anyway with whatever version it currently has, favouring availability, at the small risk that the student briefly sees slightly outdated information? The CAP theorem essentially says a distributed system cannot promise perfect correctness and constant availability at the same time while a network split is happening; one has to be favoured over the other.  
+[] Worked Example: The DRSRS leans toward option (ii) for ordinary read access, a student checking their result during a one-hour network split will still get an answer, even if it might be a few minutes out of date, rather than an error page. For sensitive write operations, though, such as final grade entry or financial clearance, the system leans the other way, toward option (i): it queues the write and only confirms it once both sides can reconnect and agree, so as to avoid two conflicting versions of something important. Once the link comes back, any records that were updated independently on both sides during the split get reconciled automatically using a "latest timestamp wins" rule. It really comes down to a practical trade-off, favour availability for everyday reads, favour correctness for critical writes, rather than treating every operation the same way.  
+[Heading1] 4.7 Queueing Model for Access Latency  
+[] A server can technically be "up" and still be too slow to be useful if too many requests pile in at once, a bit like a bank with its doors open but only two tellers on duty and a queue stretching out the door. Being available is not quite the same thing as being fast enough. This behaviour is modelled as a queue: requests arrive at some average rate λ (say, requests per second), and each of c server threads processes requests at some average rate μ. The busier the system gets relative to its capacity, the more likely an arriving request has to wait. This "busyness" is captured by the utilisation, ρ:  
+[Heading3] ρ = λ / (cμ)   (the fraction of the system's total capacity currently in use)  
+[] The chance that an arriving request has to wait at all, rather than being served immediately, is given by the Erlang-C formula:  
+[] P_wait = [ (cρ)^c / (c!(1−ρ)) ] × P0 ,   where P0 is the probability the system is completely idle  
+[] Worked Example: Suppose one shard receives λ = 50 requests per second, and each of its c = 4 server threads can handle μ = 20 requests per second, giving a total capacity of cμ = 80 requests per second. The utilisation is:  
+[Heading3] ρ = 50 / 80 = 0.625   (the system is running at 62.5% of its maximum capacity)  
+[] Since ρ = 0.625 is comfortably below 1, the Erlang-C formula gives a fairly small P_wait, most requests are served almost immediately, with only a small queueing delay. The general pattern is: the further ρ stays below 1, the shorter the wait, but as more requests pile in and ρ creeps close to 1, wait times start growing very sharply, a small increase in traffic near full capacity causes a disproportionately large increase in delay. This is exactly why the design keeps enough server threads (c) per shard to hold ρ comfortably below 1, rather than assuming that a database being merely "up" automatically means students can reach their records quickly.  
+[Heading1] 4.8 Simulation Results and Discussion  
+[] [Insert your group's actual simulation output here once the Python/SimPy script has been run, the plots and discussion below should be replaced with your real numbers. What follows illustrates the pattern we would expect, based on the analytical models above.]  
+[Heading2] 4.8.1 Availability Results  
+[] Analytically, Section 4.3 predicts a system availability of around 99.85%, with the access and application layers doing most of the damage rather than the database tier. The Monte Carlo simulation should land close to this figure, with any difference likely coming from the correlated disaster events, which the simple product-of-availabilities formula does not fully capture on its own.  
+[Heading2] 4.8.2 Data-Loss Results  
+[] The simulation is expected to back up the result from Section 4.5: configurations with no independent cloud replica (k2 = 0) should show a data-loss probability driven almost entirely by the campus-disaster rate λ_d, since correlated replicas tend to fail together. Bringing in even a single cloud replica (k2 = 1) should cut the simulated data-loss probability by several orders of magnitude, which would give empirical backing to the hybrid-cloud decision made in Chapter Three.  
+[Heading2] 4.8.3 Latency and Access Results  
+[] The M/M/c model, and its simulated equivalent, should show that as long as ρ = λ/(cμ) is kept comfortably below 1, most requests are served within the target service-level objective, and P_wait climbs sharply once ρ gets close to 1. This is a standard result in queueing theory, and it is the justification for provisioning enough server threads per shard rather than trusting that availability alone guarantees usable access.  
+[Heading2] 4.8.4 Sensitivity Analysis  
+[] [Insert a table or chart varying k1, k2, and λ_d and showing how P_loss and availability change, generated from repeated simulation runs.] In general, and consistent with Section 4.5, P_loss should turn out to be far more sensitive to adding an independent-domain replica (k2) than to adding more correlated on-campus replicas (k1).  
+[Heading1] 4.9 Validation and Verification  
+[Heading2] 4.9.1 Verification  
+[] Verification checks that the simulation code actually implements the mathematical models correctly, rather than just producing plausible-looking numbers. This is done in two ways: first, by checking that in the limiting case of a single replica with no disasters (k1 = 1, k2 = 0, λ_d = 0), the simulated availability converges to the plain single-node value A = MTTF/(MTTF+MTTR); and second, by checking that the simulated shard availability for k independent, disaster-free replicas converges to the closed-form A_shard = 1 − (1−A)^k from Section 4.2 as the number of Monte Carlo trials increases.  
+[Heading2] 4.9.2 Validation  
+[] Validation, on the other hand, checks whether the model's assumptions are reasonable reflections of real-world behaviour. This means comparing the assumed MTTF/MTTR figures against published cloud-provider SLA numbers (typical commercial cloud regions advertise availability somewhere around 99.9%–99.99%), and comparing the assumed disaster rate λ_d against whatever historical records of power outages, fires, or flooding exist for the institution, where such records are available. It should be said plainly that, given the scope of a coursework project, some of the parameters in Table 3.2 are reasonable illustrative assumptions rather than measured data, and would need to be revisited if real operational figures ever become available.  
+[Heading1] CHAPTER 5  
+[Heading1] SUMMARY, CONCLUSION, AND RECOMMENDATIONS  
+[Heading1] 5.1 Summary  
+[] This project set out to design, model, and simulate a distributed database architecture for student records that could genuinely be called disaster-resilient, using the DRSRS as a working example. Chapter One laid out the problem and the objectives; Chapter Two reviewed the theoretical background behind distributed databases, sharding, replication, SPOF elimination, the CAP theorem, and hybrid cloud computing; Chapter Three worked through the actual architecture, four levels of distribution moving from node redundancy up to full hybrid-cloud disaster recovery, along with the simulation methodology used to test it; and Chapter Four developed the mathematical models behind availability, quorum reliability, permanent data loss, the CAP tradeoff, and access latency, each backed by a worked numerical example, before reporting the expected simulation results.  
+[Heading1] 5.2 Limitations of the Study  
+[] The models assume failure and repair times follow an exponential distribution, mainly for mathematical convenience; real hardware failure patterns, which often follow something closer to a Weibull distribution, may behave differently, especially as equipment ages.  
+[] Disaster events are modelled as independent, memoryless occurrences, but in reality disasters can cluster together, an extended national power crisis, for instance, could increase the correlation between failures across regions in a way the model does not capture.  
+[] The cost, energy, and bandwidth implications of running multiple replicas and keeping cross-region or cross-cloud data in sync are acknowledged as real concerns, but they are not modelled quantitatively in this report.  
+[] Security-related failures, such as a ransomware attack affecting several connected replicas at once, fall outside the scope of the reliability models presented here, which focus specifically on physical and infrastructural failure rather than malicious attacks.  
+[Heading1] 5.3 Conclusion  
+[] Taken together, this project has modelled and simulated a Disaster-Resilient Student Record System built around the core principles of database and distributed systems: sharding for scalability and fault isolation, multi-level replication for redundancy, and hybrid-cloud deployment for genuine disaster resilience. The mathematical models in Chapter Four, particularly the parallelredundancy availability formula and the correlated-domain data-loss formula, give the architectural decisions a quantitative, defensible basis, rather than leaving them as design choices justified only by intuition. The central finding worth highlighting is that geographically and organizationally independent replication (hybrid cloud) reduces the risk of permanent data loss by a disproportionately large amount compared to simply adding more replicas in the same physical location, because it breaks the correlation between failures happening at the same time.  
+[Heading1] 5.4 Recommendations  
+[] Based on the modelling and simulation carried out in this project, the group recommends that any real-world implementation of the DRSRS should adopt, at minimum:  
+[ListParagraph] Sharding by consistent hashing of the matriculation number.  
+[ListParagraph] Two synchronous on-campus replicas per shard, for immediate failover.  
+[ListParagraph] At least one asynchronous replica in a second physical region.  
+[ListParagraph] At least one asynchronous replica in a public cloud disaster-recovery tier, backed by a Raft-based consensus cluster of at least three coordination nodes.  
+[] Future work building on this project could involve simulating with real operational data once available, extending the models to account for correlated disaster clustering, and carrying out a proper cost-benefit analysis to weigh the resilience gains from additional replicas against the infrastructure cost of maintaining them.  
+[Heading1] REFERENCES  
+[] Coulouris, G., Dollimore, J., Kindberg, T., & Blair, G. (2011). Distributed Systems:  
+[] Concepts and Design (5th ed.). Addison-Wesley.  
+[] Özsu, M. T., & Valduriez, P. (2020). Principles of Distributed Database Systems (4th ed.). Springer.  
+[] Gilbert, S., & Lynch, N. (2002). Brewer's conjecture and the feasibility of consistent, available, partition-tolerant web services. ACM SIGACT News.  
+[] Trivedi, K. S. (2016). Probability and Statistics with Reliability, Queuing, and Computer Science Applications (2nd ed.). Wiley.  
+[] Kleinrock, L. (1975). Queueing Systems, Volume 1: Theory. Wiley.  
+[] Course lecture material: CIT 412 Modeling and Simulation, FUTA Department of Computer Science.  
