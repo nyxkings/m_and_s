@@ -1,0 +1,136 @@
+================================================================================
+  THE WHOLE PROJECT — EXPLAINED LIKE YOU ARE 5
+  Disaster-Resilient Student Record System (DRSRS)
+================================================================================
+
+WHAT IS THIS ABOUT?
+-------------------
+Imagine a school keeps all student info (names, grades, fees) in ONE box
+in ONE room.
+
+If that room floods, burns, or the box breaks...
+  -> nobody can see the records
+  -> maybe the records are gone forever
+
+That is bad.
+
+This project asks:
+  "How do we keep school records safe, even if something really bad happens?"
+
+
+THE BIG IDEA (in kid words)
+---------------------------
+Instead of ONE box in ONE room, we do this:
+
+  1. SPLIT the records into many little piles
+     (like sorting toys into different baskets)
+     We call that "sharding".
+
+  2. MAKE COPIES of each pile
+     - one copy in Building A (the main school)
+     - one copy in Building B (another campus)
+     - one copy in a "cloud" (a far-away computer owned by someone else)
+
+  3. If Building A has a disaster, Building B and the cloud still have
+     the copies. The records are not gone.
+
+That is the Disaster-Resilient Student Record System.
+
+
+WHAT DID WE BUILD ON THE COMPUTER?
+----------------------------------
+We did NOT build a real school website for students to log into.
+
+We built a MATH + SIMULATION toy that answers questions like:
+
+  - How often can people still get their records?  (availability)
+  - How likely are we to lose a record forever?   (data loss)
+  - How long does it take to answer a request?    (waiting / latency)
+
+Think of it like a video game that pretends years pass quickly.
+Bad things happen at random (computers break, campus disasters).
+We watch what happens to the copies of the records.
+
+
+THE THREE MAIN PARTS
+--------------------
+
+  A) THE DESIGN (the plan)
+     How the boxes, copies, and buildings are arranged.
+     Levels of safety:
+       Level 0: spare computer next to the first one
+       Level 1: split data + copies in the same building
+       Level 2: copy to another campus far away
+       Level 3: copy to the cloud (safest extra copy)
+
+  B) THE MATH (Chapter 4 stuff)
+     Formulas that estimate:
+       - "If one computer works 99% of the time, what if we have 3?"
+       - "If a whole campus dies, do we still have a cloud copy?"
+       - "If lots of people ask at once, how long do they wait?"
+         (that last one is like a checkout line at a store)
+
+  C) THE SIMULATION (the pretend world)
+     The computer rolls dice many times (Monte Carlo).
+     It pretends 5 years happen, 1000 times.
+     Then it draws pictures (graphs) of the results.
+
+
+WHAT COMES OUT?
+---------------
+After you run the program, you get:
+
+  outputs/figures/   -> pretty graphs (pictures of the results)
+  outputs/tables/    -> numbers in spreadsheet-style files
+  outputs/reports/   -> written answers to paste into the school report
+
+Important graphs include things like:
+  - how often the system was "up"
+  - whether cloud copies stop permanent loss
+  - how fast requests were answered
+
+
+WHAT DID WE LEARN? (the grown-up punchline, still simple)
+--------------------------------------------------------
+Adding more copies in the SAME building helps a little.
+
+But adding ONE copy in a DIFFERENT place (the cloud) helps A LOT
+against "the whole campus is gone" disasters.
+
+Because if all your copies are in the same building,
+one big bad day can wipe them ALL out together.
+
+
+HOW DO YOU RUN IT? (super short)
+--------------------------------
+1. Make a special Python playground called .venv
+2. Install the tools (SimPy, NumPy, etc.)
+3. Run:
+
+     source .venv/bin/activate
+     python -m drsrs.main --quick
+
+4. Open the pictures in outputs/figures/
+
+
+WORDS YOU MIGHT SEE (tiny dictionary)
+-------------------------------------
+  shard       = one little pile of the big database
+  replica     = a copy of a pile
+  k1          = how many copies on the main campus
+  k2          = how many copies in the cloud
+  disaster    = something that knocks out a whole campus at once
+  availability= "is it working right now?"
+  Monte Carlo = play the pretend game many times and average the results
+  SimPy       = the Python library that runs the pretend timeline
+
+
+THAT'S THE WHOLE PROJECT
+------------------------
+School records are precious.
+One box in one room is scary.
+Split them, copy them, put a spare far away, check the math,
+pretend bad days happen a thousand times, then show the pictures.
+
+Done.
+================================================================================
