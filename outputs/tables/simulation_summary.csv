@@ -5,14 +5,14 @@ System availability (analytical series),0.9985004999990055
 Quorum availability (analytical),0.999997007985024
 System availability (simulated mean),1.0
 System availability (simulated std),0.0
-Quorum availability (simulated mean),0.9999968890953657
+Quorum availability (simulated mean),0.9999939536822886
 Data-loss rate /shard·year (sim mean),0.0
 P_loss correlated (analytical),1.0000000000000001e-07
 Utilisation ρ,0.625
 P_wait (Erlang-C),0.31985670419652
 "Mean response (analytical, ms)",60.661890139884
-"Mean response (sim, ms)",49.95639470435217
+"Mean response (sim, ms)",49.82706195644092
 SLO ≤200 ms fraction (analytical),0.9715531291424397
-SLO ≤200 ms fraction (sim mean),0.9818279773977376
-Monte Carlo trials,1000.0
-Simulated years per trial,5.0
+SLO ≤200 ms fraction (sim mean),0.9823767718890128
+Monte Carlo trials,40.0
+Simulated years per trial,2.0

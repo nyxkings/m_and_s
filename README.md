@@ -36,16 +36,59 @@ M_and_S/
 └── README.md
 ```
 
-## Setup
+## Requirements
+
+- **Python 3.10+** (developed and tested on **Python 3.12**)
+- A local **virtual environment** created with the standard library
+  [`venv`](https://docs.python.org/3/library/venv.html) module
+  (folder name: `.venv` in the project root)
+- Dependencies listed in `requirements.txt` (SimPy, NumPy, Pandas,
+  Matplotlib, SciPy, PyYAML, python-docx, pytest, …)
+
+Do **not** run the project with the system `python3` alone — that is what
+causes `ModuleNotFoundError: No module named 'numpy'`. Always activate
+`.venv` first (or call `.venv/bin/python` directly).
+
+## Setup (create `.venv` and install packages)
+
+From the project root:
 
 ```bash
-cd "/home/user/Desktop/Project stuff/M_and_S"
+cd "/path/to/M_and_S"
+
+# Create a fresh virtual environment (once)
 python3 -m venv .venv
+
+# Activate it
+# Linux / macOS:
 source .venv/bin/activate
+# Windows (PowerShell):
+#   .venv\Scripts\Activate.ps1
+# Windows (cmd):
+#   .venv\Scripts\activate.bat
+
+# Install dependencies into the venv
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+When the venv is active, your shell prompt usually shows `(.venv)`, and
+`which python` / `where python` should point inside `.venv`.
+
+To leave the venv later: `deactivate`.
+
+**Already have a `.venv`?** Skip `python3 -m venv .venv`, activate it, then
+`pip install -r requirements.txt` if packages are missing.
+
+**Without activating** (Linux/macOS), you can still run:
+
+```bash
+.venv/bin/python -m drsrs.main --quick
+```
+
 ## Run
+
+Activate `.venv` first, then:
 
 ```bash
 # Full campaign (1000 trials × 5 years + sensitivity + verification)
@@ -90,4 +133,4 @@ After a successful run:
 
 ## Licence
 
-Coursework artefact for CSC 508, Federal University of Technology, Akure.
+

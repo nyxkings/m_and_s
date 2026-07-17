@@ -15,7 +15,7 @@ This document replaces the report placeholders that stated
 | Disaster rate λ_d | 0.05 /year |
 | Mean disaster duration | 48.0 h |
 | λ, μ, c | 50.0 req/s, 20.0 /s/thread, 4 threads |
-| Horizon × trials | 5.0 years × 1000 trials |
+| Horizon × trials | 2.0 years × 40 trials |
 
 ## 4.8.1 Availability Results
 
@@ -27,8 +27,8 @@ As predicted, the network (0.9995) and application (0.999)
 layers dominate over the highly redundant database tier
 (A_shard ≈ 1.00000000).
 
-**Simulated (database tier):** across 1000 Monte Carlo trials of
-5.0 simulated years each, mean *database* availability
+**Simulated (database tier):** across 40 Monte Carlo trials of
+2.0 simulated years each, mean *database* availability
 (every shard has ≥1 reachable replica — Section 3.5 metric) was
 **100.00000000%** (std = 0.000000 pp).
 Composing with the network and application layers as in Section 4.3 gives
@@ -36,7 +36,7 @@ end-to-end availability
 **A_e2e = A_network × A_app × A_db ≈ 99.850050%**,
 or about **13.14 hours/year** of end-to-end downtime — close to
 the analytical prediction of 99.8500%.
-Mean quorum availability was **99.999689%**
+Mean quorum availability was **99.999395%**
 (analytical: 99.999701%).
 
 The DES intentionally models database/coordination failures and disasters;
@@ -59,7 +59,7 @@ Sensitivity runs confirm the hybrid-cloud thesis:
 
 | Configuration | Simulated loss rate /shard·year |
 |---------------|----------------------------------|
-| k1=2, k2=0 (no cloud) | 1.625e-03 |
+| k1=2, k2=0 (no cloud) | 7.812e-03 |
 | k1=2, k2=1 (hybrid) | 0.000e+00 |
 
 Adding a single independent cloud replica reduces empirical loss risk by
@@ -74,9 +74,9 @@ Queue utilisation ρ = λ/(cμ) = **0.6250** with
 Erlang-C P_wait ≈ **0.3199**; analytical mean response ≈
 **60.66 ms**.
 
-Simulation: mean response **49.96 ms**
-(p95 of trial means: 149.47 ms);
-fraction of requests meeting the 200 ms SLO ≈ **98.18%**
+Simulation: mean response **49.83 ms**
+(p95 of trial means: 148.96 ms);
+fraction of requests meeting the 200 ms SLO ≈ **98.24%**
 (analytical ≈ 97.16%).
 
 As ρ approaches 1, P_wait and response time grow sharply
@@ -102,7 +102,7 @@ Figures: `lambda_d_sensitivity.png`, `availability_heatmap.png`.
 
 - **[PASS]** Node availability formula MTTF=2000, MTTR=2: analytical=0.999001, simulated=0.999001, |err|=0
 - **[PASS]** Quorum formula (n=3, A=0.99) vs worked example: analytical=0.999703, simulated=0.999702, |err|=1e-06
-- **[PASS]** Single-node availability (k1=1, λ_d=0): analytical=0.999001, simulated=0.99898114, |err|=1.99e-05
+- **[PASS]** Single-node availability (k1=1, λ_d=0): analytical=0.999001, simulated=0.99899569, |err|=5.31e-06
 - **[PASS]** Independent 3-replica shard availability (λ_d=0): analytical=1, simulated=1, |err|=9.97e-10
 
 ## Generated figures
